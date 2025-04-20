@@ -7,9 +7,9 @@
 5. Download OpenCV v4.10.0(https://github.com/opencv/opencv/archive/refs/tags/4.10.0.zip)
 6. Extract and goto OpenCV directory and create a build folder.
 7. Goto build folder and build OpenCV using MingW.
-		mkdir build
-		cd build
-		cmake .. -G "MinGW Makefiles"
-		cmake --build .
+	* mkdir build
+	* cd build
+	* cmake .. -G "MinGW Makefiles"
+	* cmake --build .
 8. After build is completed, add lib and bin to environment variables. (D:\opencv-4.10.0\opencv-4.10.0\build\bin, D:\opencv-4.10.0\opencv-4.10.0\build\lib)
 9. Now, all set to build your OpenCV project. Create a build folder inside your project root directory and build it using the set of commands used to build the OpenCV.
