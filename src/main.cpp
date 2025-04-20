@@ -1,9 +1,9 @@
 #include <thread>
 #include <opencv2/opencv.hpp>
-#include "frameBuffer.h"
-#include "frameProcessing.h"
-#include "cameraCapture.h"
-#include "running_flag.h"
+#include <VideoProcessing/frameBuffer.h>
+#include <VideoProcessing/frameProcessing.h>
+#include <VideoProcessing/cameraCapture.h>
+#include <VideoProcessing/running_flag.h>
 
 
 
