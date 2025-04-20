@@ -4,9 +4,9 @@
 #include <deque>
 #include <atomic>
 #include <opencv2/opencv.hpp>
-#include "frameProcessing.h"
-#include "frameBuffer.h"
-#include "running_flag.h"
+#include <VideoProcessing/frameProcessing.h>
+#include <VideoProcessing/frameBuffer.h>
+#include <VideoProcessing/running_flag.h>
 
 
 void frameProcessing(FrameBuffer& fb)
