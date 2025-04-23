@@ -1,12 +1,16 @@
+// frameProcessing.cpp
+
 #include <iostream>
 #include <thread>
 #include <mutex>
 #include <deque>
 #include <atomic>
 #include <opencv2/opencv.hpp>
-#include <VideoProcessing/frameProcessing.h>
-#include <VideoProcessing/frameBuffer.h>
-#include <VideoProcessing/running_flag.h>
+#include <pipeline/frameProcessing.h>
+#include <pipeline/frameBuffer.h>
+#include <pipeline/running_flag.h>
+#include <processing/getSIFTKeypoints.h>
+#include <processing/getCannyEdges.h>
 
 
 void frameProcessing(FrameBuffer& fb)
@@ -16,16 +20,14 @@ void frameProcessing(FrameBuffer& fb)
 		cv::Mat frame;
 		if (fb.pop(frame))
 		{
-			// Simulate processing: Canny edge detection
-			cv::Mat edges;
-			cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
-			cv::Canny(frame, edges, 100, 200);
-			cv::imshow("Processed", edges);
+			getCannyEdges(frame);
+			getSIFTKeypoints(frame);
 		}
 
 		if (cv::waitKey(1) == 'q')
 		{
 			running = false;
+			cv::destroyAllWindows();
 			break;
 		}
 	}
