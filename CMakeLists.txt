@@ -21,7 +21,7 @@ include_directories(include ${OpenCV_INCLUDE_DIRS})
 set(APP_NAME VideoProcessing)
 
 # Source files
-file(GLOB_RECURSE SOURCES src/*.cpp)
+file(GLOB_RECURSE SOURCES src/pipeline/*.cpp src/processing/*.cpp)
 
 add_executable(${APP_NAME} ${SOURCES})
 
