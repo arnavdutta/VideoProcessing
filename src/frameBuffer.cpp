@@ -1,7 +1,9 @@
+// frameBuffer.cpp
+
 #include <iostream>
 #include <mutex>
 #include <deque>
-#include <VideoProcessing/frameBuffer.h>
+#include <pipeline/frameBuffer.h>
 
 void FrameBuffer::push(const cv::Mat& frame)
 {

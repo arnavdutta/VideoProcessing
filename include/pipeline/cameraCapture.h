@@ -1,5 +1,8 @@
+// cameraCapture.h
+
 #pragma once
-#include <VideoProcessing/frameBuffer.h>
+
+#include <pipeline/frameBuffer.h>
 
 //void cameraCapture();
 

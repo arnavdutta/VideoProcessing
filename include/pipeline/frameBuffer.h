@@ -1,4 +1,5 @@
 // frameBuffer.h
+
 #pragma once
 
 #include <iostream>
