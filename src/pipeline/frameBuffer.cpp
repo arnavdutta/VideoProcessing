@@ -3,7 +3,7 @@
 #include <iostream>
 #include <mutex>
 #include <deque>
-#include <pipeline/frameBuffer.h>
+#include <pipeline/frameBuffer.hpp>
 
 void FrameBuffer::push(const cv::Mat& frame)
 {

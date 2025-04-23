@@ -2,10 +2,10 @@
 
 #include <thread>
 #include <opencv2/opencv.hpp>
-#include <pipeline/frameBuffer.h>
-#include <pipeline/frameProcessing.h>
-#include <pipeline/cameraCapture.h>
-#include <pipeline/running_flag.h>
+#include <pipeline/frameBuffer.hpp>
+#include <pipeline/frameProcessing.hpp>
+#include <pipeline/cameraCapture.hpp>
+#include <pipeline/running_flag.hpp>
 
 
 

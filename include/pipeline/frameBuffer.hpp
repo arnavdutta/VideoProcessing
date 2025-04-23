@@ -1,4 +1,4 @@
-// frameBuffer.h
+// frameBuffer.hpp
 
 #pragma once
 

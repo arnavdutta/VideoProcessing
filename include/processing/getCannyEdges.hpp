@@ -1,4 +1,4 @@
-// getCannyEdges.h
+// getCannyEdges.hpp
 
 #pragma once
 

@@ -2,8 +2,8 @@
 
 #include <thread>
 #include <opencv2/opencv.hpp>
-#include <pipeline/frameBuffer.h>
-#include <pipeline/running_flag.h>
+#include <pipeline/frameBuffer.hpp>
+#include <pipeline/running_flag.hpp>
 
 
 // Simple Program

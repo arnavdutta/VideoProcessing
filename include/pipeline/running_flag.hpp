@@ -1,4 +1,4 @@
-// running_flag.h
+// running_flag.hpp
 
 #pragma once
 

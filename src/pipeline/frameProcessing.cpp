@@ -6,11 +6,11 @@
 #include <deque>
 #include <atomic>
 #include <opencv2/opencv.hpp>
-#include <pipeline/frameProcessing.h>
-#include <pipeline/frameBuffer.h>
-#include <pipeline/running_flag.h>
-#include <processing/getSIFTKeypoints.h>
-#include <processing/getCannyEdges.h>
+#include <pipeline/frameProcessing.hpp>
+#include <pipeline/frameBuffer.hpp>
+#include <pipeline/running_flag.hpp>
+#include <processing/getSIFTKeypoints.hpp>
+#include <processing/getCannyEdges.hpp>
 
 
 void frameProcessing(FrameBuffer& fb)

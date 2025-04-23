@@ -1,4 +1,4 @@
-// getSIFTKeypoints.h
+// getSIFTKeypoints.hpp
 
 #pragma once
 
