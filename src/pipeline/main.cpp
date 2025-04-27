@@ -8,8 +8,6 @@
 #include <pipeline/running_flag.hpp>
 
 
-
-
 int main()
 {
     FrameBuffer buffer(1);  // Single frame buffer for minimal latency

@@ -55,6 +55,7 @@
 void cameraCapture(FrameBuffer& fb)
 {
     cv::VideoCapture cap(0);
+
     if (!cap.isOpened())
     {
         std::cerr << "Camera open failed\n";
