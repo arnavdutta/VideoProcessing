@@ -4,4 +4,4 @@
 
 #include <opencv2/opencv.hpp>
 
-void getSIFTKeypoints(cv::Mat&);
+std::pair<std::vector<cv::KeyPoint>, cv::Mat> getSIFTKeypoints(cv::Mat&, bool);
