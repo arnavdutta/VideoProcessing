@@ -40,7 +40,7 @@ void frameProcessing(FrameBuffer& fb)
                 // Match keypoints
                 // FLANN Matcher(KD - Trees automatically)
                 cv::Ptr<cv::DescriptorMatcher> matcher = cv::FlannBasedMatcher::create();
-                
+
                 // kNN Match(k = 2)
                 std::vector<std::vector<cv::DMatch>> knnMatches;
                 matcher->knnMatch(descStored, descCurrent, knnMatches, 2);
@@ -48,66 +48,77 @@ void frameProcessing(FrameBuffer& fb)
 
                 // Lowe’s Ratio Test
                 const float ratio_thresh = 0.75f;
-                std::vector<cv::DMatch> good_matches;
-                for (const auto& knnMatch : knnMatches) 
+                std::vector<cv::DMatch> goodMatches;
+                for (const auto& knnMatch : knnMatches)
                 {
-                    if (knnMatch.size() == 2 && knnMatch[0].distance < ratio_thresh * knnMatch[1].distance) 
-                    {
-                        good_matches.push_back(knnMatch[0]);
-                    }
+                    if (knnMatch.size() == 2 && knnMatch[0].distance < ratio_thresh * knnMatch[1].distance)
+                        goodMatches.push_back(knnMatch[0]);
                 }
 
-				// Find homography matrix
-				std::vector<cv::Point2f> pointsStored, pointsCurrent;
-				for (const auto& match : good_matches)
-				{
-					pointsStored.push_back(kpStored[match.queryIdx].pt);
-					pointsCurrent.push_back(kpCurrent[match.trainIdx].pt);
-				}
-				
-                if (pointsStored.size() >= 4 && pointsCurrent.size() >= 4)
-				{
-					cv::Mat homography = cv::findHomography(pointsStored, pointsCurrent, cv::RANSAC);
-                    
-                    if (homography.empty()) 
+                if (goodMatches.size() >= 8) // essential matrix needs at least 8 points
+                {
+                    std::vector<cv::Point2f> pts1, pts2;
+                    for (auto& match : goodMatches)
                     {
-                        std::cerr << "Error: Homography computation failed." << std::endl;
-                        continue;
+                        pts1.push_back(kpStored[match.queryIdx].pt);
+                        pts2.push_back(kpCurrent[match.trainIdx].pt);
                     }
 
-                    if (homography.rows != 3 || homography.cols != 3) 
-                    {
-                        std::cerr << "Error: Homography matrix is not 3x3." << std::endl;
-                        continue;
-                    }
-                    if (homography.type() != CV_32F && homography.type() != CV_64F) 
-                    {
-                        std::cerr << "Error: Homography matrix has wrong type. Converting to CV_32F..." << std::endl;
-                        homography.convertTo(homography, CV_32F);
-                    }
-				
-                    // Perform perspective transform
-					cv::Mat transformedFrame;
-					cv::warpPerspective(storedFrame, transformedFrame, homography, currentFrame.size());
-					
-                    // Display the stitched output
-					cv::Mat stitchedOutput;
-					cv::addWeighted(currentFrame, 0.5, transformedFrame, 0.5, 0, stitchedOutput);
-					cv::imshow("Stitched Output", stitchedOutput);
+                    // Find fundamental matrix to filter out outliers
+                    std::vector<uchar> inliersMask(pts1.size());
+                    cv::Mat F = cv::findFundamentalMat(pts1, pts2, cv::FM_RANSAC, 3.0, 0.99, inliersMask);
 
-                    // Draw matches (optional)
-                    cv::Mat img_matches;
-                    cv::drawMatches(storedFrame, kpStored, currentFrame, kpCurrent, good_matches, img_matches);
-                    cv::imshow("Good Matches", img_matches);
-				}
+                    std::vector<cv::Point2f> inlierPts1, inlierPts2;
+                    for (size_t i = 0; i < inliersMask.size(); i++)
+                    {
+                        if (inliersMask[i])
+                        {
+                            inlierPts1.push_back(pts1[i]);
+                            inlierPts2.push_back(pts2[i]);
+                        }
+                    }
+
+                    if (inlierPts1.size() >= 4)
+                    {
+                        cv::Mat homography, maskHomography;
+                        homography = cv::findHomography(inlierPts2, inlierPts1, cv::RANSAC, 4.0, maskHomography, 2000, 0.995);
+                        // Notice: inlierPts2 -> inlierPts1
+
+                        if (!homography.empty() && homography.rows == 3 && homography.cols == 3)
+                        {
+                            if (homography.type() != CV_32F && homography.type() != CV_64F)
+                                homography.convertTo(homography, CV_32F);
+
+                            cv::Mat transformedFrame;
+                            cv::warpPerspective(currentFrame, transformedFrame, homography, storedFrame.size());
+                            // Notice: warp CURRENT frame to align with STORED frame
+
+                            cv::Mat overlay;
+                            cv::addWeighted(storedFrame, 0.5, transformedFrame, 0.5, 0, overlay);
+
+                            cv::imshow("Overlay: Stored vs Aligned Current", overlay);
+                        }
+                        else
+                        {
+                            std::cerr << "Error: Invalid homography matrix." << std::endl;
+                        }
+                    }
+                    else
+                    {
+                        std::cerr << "Error: Not enough inliers after fundamental matrix filtering." << std::endl;
+                    }
+                }
+                else
+                {
+                    std::cerr << "Error: Not enough good matches for fundamental matrix estimation." << std::endl;
+                }
             }
 
             // Display the current frame
             cv::imshow("Current Frame", currentFrame);
         }
 
-        // Check for key press
-        char key = cv::waitKey(1);
+        char key = (char)cv::waitKey(1);
         if (key == 'q')
         {
             running = false;
@@ -122,15 +133,16 @@ void frameProcessing(FrameBuffer& fb)
                 storedFrame = frame.frame.clone();
                 storedFrameIndex = frame.frameIndex;
                 isFrameStored = true;
-                std::cout << "Frame stored: Index " << storedFrameIndex << std::endl;
+                std::cout << "Stored frame index: " << storedFrameIndex << std::endl;
             }
             else
             {
                 // Capture the latest frame and show the stitched output
                 storedFrame.release();
                 isFrameStored = false;
-                std::cout << "Stitched output displayed. Frame storage reset." << std::endl;
+                std::cout << "Reset stored frame." << std::endl;
             }
         }
     }
 }
+
