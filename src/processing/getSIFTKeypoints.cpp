@@ -5,7 +5,7 @@
 #include <opencv2/opencv.hpp>
 
 // Function to get SIFT keypoints and descriptors from a frame
-std::pair<std::vector<cv::KeyPoint>, cv::Mat> getSIFTKeypoints(cv::Mat& frame, bool debug=false)
+std::pair<std::vector<cv::KeyPoint>, cv::Mat> getSIFTKeypoints(const cv::Mat& frame, bool debug=false)
 {
     // Check if the frame is empty
     if (frame.empty())
